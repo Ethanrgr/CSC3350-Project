@@ -1,9 +1,6 @@
 package mainmenu;
 
-import dao.Role;
-import dao.User;
-import dao.adminDAOImpl;
-import dao.employeeDAOImpl;
+import dao.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -23,6 +20,7 @@ public class DaoTest {
 //        ArrayList<User> userList = new ArrayList<>();
         employeeDAOImpl employeeDAOImpl1 = new employeeDAOImpl();
         adminDAOImpl adminDAOImpl1 = new adminDAOImpl();
+        userDAOImpl userDAOImpl1 = new userDAOImpl();
 
         System.out.println("Enter email address:");
         String email = scanner.next();
@@ -30,24 +28,26 @@ public class DaoTest {
         String password = scanner2.next();
 
         if (firstAction.toLowerCase() == "register"){
-
+            User tempUser;
             if (userType.toLowerCase() == "employee"){
-                User tempUser = new User(email,password,Role.EMPLOYEE);
-                employeeDAOImpl1.register(tempUser); //Account registered - redirect to profile page
+                tempUser = new User(email, password, Role.EMPLOYEE);
             }
             else {
-                User tempUser = new User(email,password, Role.ADMIN);
-                adminDAOImpl1.register(tempUser);
+                tempUser = new User(email, password, Role.ADMIN);
             }
-
+            userDAOImpl1.register(tempUser);
+            //registerd - redirect to login page
         }
         else if (firstAction.toLowerCase() == "login"){
+            User tempUser;
             if (userType.toLowerCase() == "employee"){
-                employeeDAOImpl1.loginAuthentication(email,password);
+                tempUser = new User(email, password, Role.EMPLOYEE);
             }
             else {
-                adminDAOImpl1.loginAuthentication(email,password);
+                tempUser = new User(email, password, Role.ADMIN);
             }
+            userDAOImpl1.loginAuthentication(tempUser);
+            //registerd - redirect to login page
         }
         else {
 

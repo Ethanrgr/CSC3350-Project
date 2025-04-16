@@ -1,6 +1,6 @@
 package dao;
 
-public interface employeeDAO extends userDAO{
+public interface employeeDAO{
     String displayEmployee();
     String displayPayStatementHistory();
 

@@ -1,6 +1,7 @@
 package dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class employeeDAOImpl implements employeeDAO {
     User user = new User("test","test",Role.EMPLOYEE);
@@ -16,17 +17,6 @@ public class employeeDAOImpl implements employeeDAO {
 
     @Override
     public String displayPayStatementHistory() {
-        return null;
-    }
-
-    @Override
-    public String register(User user) {
-        return null;
-    }
-
-    @Override
-    public String loginAuthentication(String email, String password) {
-        //SELECT email,password from users where Role = User; if returns null, not found; else found
         return null;
     }
 }

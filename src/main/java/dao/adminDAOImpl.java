@@ -2,6 +2,7 @@ package dao;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 public class adminDAOImpl implements adminDAO{
     User user = new User("test","test", Role.ADMIN);
@@ -51,14 +52,4 @@ public class adminDAOImpl implements adminDAO{
         return null;
     }
 
-    @Override
-    public String register(User user) { //Registering new admin account
-        return null;
-    }
-
-    @Override
-    public String loginAuthentication(String email, String password) { //verify if admin user account exist in user table in db
-        //SELECT email,password from users where Role = Admin; if returns null, not found; else found
-        return null;
-    }
 }
