@@ -1,7 +1,7 @@
 package dao;
 
 public enum Role {
-    USER,
+    EMPLOYEE,
     ADMIN
 
 }

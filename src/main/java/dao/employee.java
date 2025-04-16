@@ -7,11 +7,11 @@ public class employee {
     private String fName;
     private String lName;
     private String email;
-    private Date hireDate; //String or Date datatype - will decide later
+    private String hireDate; //String or Date datatype - will decide later
     private float salary;
     private String ssn;
 
-    public employee(int empId, String fName, String lName, String email, Date hireDate, float salary, String ssn){
+    public employee(int empId, String fName, String lName, String email, String hireDate, float salary, String ssn){
         this.empId = empId;
         this.fName = fName;
         this.lName = lName;
@@ -27,10 +27,10 @@ public class employee {
     public String getEmail() {
         return email;
     }
-    public void setHireDate(Date hireDate) {
+    public void setHireDate(String hireDate) {
         this.hireDate = hireDate;
     }
-    public Date getHireDate() {
+    public String getHireDate() {
         return hireDate;
     }
     public void setSalary(float salary) {

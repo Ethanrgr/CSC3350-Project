@@ -3,7 +3,7 @@ package dao;
 import java.util.Date;
 
 public interface adminDAO extends userDAO{
-    boolean addUser();
+    boolean addEmployeeRecord();
     String searchEmployee(Date dob, String ssn, String empId);
     String displayAllEmployees();
 
