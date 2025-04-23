@@ -5,12 +5,8 @@ import java.util.Date;
 import java.util.Iterator;
 
 public class adminDAOImpl implements adminDAO{
-    User user = new User("test","test", Role.ADMIN);
-    ArrayList<User> arrayList = new ArrayList<>();
-
     public adminDAOImpl(){
-        arrayList.add(user);
-        System.out.println("Added test admin user");
+
     }
     @Override
     public boolean addEmployeeRecord() {

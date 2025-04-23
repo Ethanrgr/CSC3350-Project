@@ -36,7 +36,7 @@ public class DaoTest {
                 tempUser = new User(email, password, Role.ADMIN);
             }
             userDAOImpl1.register(tempUser);
-            //registerd - redirect to login page
+            //registered - redirect to login page
         }
         else if (firstAction.toLowerCase() == "login"){
             User tempUser;
@@ -46,8 +46,14 @@ public class DaoTest {
             else {
                 tempUser = new User(email, password, Role.ADMIN);
             }
-            userDAOImpl1.loginAuthentication(tempUser);
-            //registerd - redirect to login page
+            boolean result = userDAOImpl1.loginAuthentication(tempUser);
+            if (result == true){
+                System.out.println("Success:");
+            }
+            else{
+                System.out.println("Failure");
+            }
+            // if logged in - redirect to profile page; else try again
         }
         else {
 
