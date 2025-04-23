@@ -36,4 +36,9 @@ public class User {
         this.role = role;
     }
 
+    public String toString(){
+        return "Email: " + this.email + " Password: " + this.password + " Role: " + this.role;
+    }
+
 }
+

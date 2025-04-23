@@ -15,9 +15,15 @@ public class userDAOImpl implements userDAO{
         System.out.println("Added test user and employee");
     }
     @Override
-    public String register(User user) {
-        arrayList.add(user);
-        return null;
+    public Boolean register(User user) {
+        try{
+            arrayList.add(user);
+        } catch(Exception e) {
+            System.out.println("Error registering: " + e);
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -25,10 +31,15 @@ public class userDAOImpl implements userDAO{
         Iterator<User> iterator = arrayList.iterator();
         while (iterator.hasNext()){
             User db_user = iterator.next();
-            if (user.getEmail() == db_user.getEmail() && user.getPassword() == db_user.getPassword() && user.getRole() == db_user.getRole()){
+            if (user.getEmail().equals(db_user.getEmail()) && user.getPassword().equals(db_user.getPassword()) && user.getRole() == db_user.getRole()){
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public ArrayList<User> displayAll() {
+        return arrayList;
     }
 }
