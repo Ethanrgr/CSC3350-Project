@@ -9,7 +9,10 @@ public class Main {
                     config.staticFiles.add("src/main/resources",Location.EXTERNAL);
                 }
         );
-
+        app.get("/", ctx -> {
+            ctx.redirect("/home");
+        });
         app.start(8010);
+
     }
 }
