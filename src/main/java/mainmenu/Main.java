@@ -13,11 +13,13 @@ public class Main {
                     config.staticFiles.add("src/main/resources",Location.EXTERNAL);
 
                     config.router.apiBuilder(() -> {
-                        path("api", () -> {
-                            get("hello", ctx -> ctx.json(Map.of("message", "Hello")));
+                        path("/api", () -> {
+
+                            get("abc", ctx -> ctx.json(Map.of("message", "Hello")));
                         });
 
                     });
+
                 }
         ).start(8010);
 

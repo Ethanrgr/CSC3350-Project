@@ -1,8 +1,6 @@
-package dao;
+package model;
 
-import java.util.Date;
-
-public class employee {
+public class Employee {
     private int empId;
     private String fName;
     private String lName;
@@ -11,7 +9,7 @@ public class employee {
     private float salary;
     private String ssn;
 
-    public employee(int empId, String fName, String lName, String email, String hireDate, float salary, String ssn){
+    public Employee(int empId, String fName, String lName, String email, String hireDate, float salary, String ssn){
         this.empId = empId;
         this.fName = fName;
         this.lName = lName;

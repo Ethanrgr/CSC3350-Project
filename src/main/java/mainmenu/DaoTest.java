@@ -1,9 +1,10 @@
 package mainmenu;
 
 import dao.*;
+import model.Role;
+import model.User;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class DaoTest {
@@ -12,6 +13,10 @@ public class DaoTest {
         Scanner scanner2 = new Scanner(System.in);
 //        Scanner scanner3 = new Scanner(System.in);
 //        Scanner scanner4 = new Scanner(System.in);
+
+        String url = "jdbc:mysql://localhost:3306/employeedata";
+        String sql_user = "root";
+        String sql_password = "jinash123";
 
         employeeDAOImpl employeeDAOImpl1 = new employeeDAOImpl();
         adminDAOImpl adminDAOImpl1 = new adminDAOImpl();
@@ -39,7 +44,7 @@ public class DaoTest {
                         tempUser = new User(email, password, Role.ADMIN);
                     }
 
-                    boolean result = userDAOImpl1.register(tempUser);
+                    boolean result = userDAOImpl1.register(tempUser,url,sql_user,sql_password);
                     if (result) {
                         System.out.println("Registered------Login page");
                     } else {
@@ -59,7 +64,7 @@ public class DaoTest {
                     } else {
                         tempUser = new User(email, password, Role.ADMIN);
                     }
-                    boolean result = userDAOImpl1.loginAuthentication(tempUser);
+                    boolean result = userDAOImpl1.loginAuthentication(tempUser,url,sql_user,sql_password);
                     if (result) {
                         System.out.println("Success: ---- Login Page");
                     } else {
