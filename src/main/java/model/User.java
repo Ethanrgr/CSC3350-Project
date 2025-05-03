@@ -6,10 +6,24 @@ public class User {
     private String password;
     private Role role;
 
+    public Integer getEmpid() {
+        return empid;
+    }
+
+    public void setEmpid(Integer empid) {
+        this.empid = empid;
+    }
+
+    private Integer empid;
+
     public User(String email, String password, Role role){
         this.email = email;
         this.password = password;
         this.role = role;
+        this.empid = null;
+    }
+    public User(){
+
     }
 
     public String getEmail() {
