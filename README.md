@@ -60,7 +60,6 @@ A full-stack employee management system built with Java (Javalin) backend and Re
 │   │   └── model/          # Data models
 │   └── resources/          # Static resources
 │
-├── schema.sql              # Database schema and sample data
 └── README.md               # This file
 ```
 
