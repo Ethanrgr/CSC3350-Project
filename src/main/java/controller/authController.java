@@ -5,6 +5,8 @@ import dto.registrationRequest;
 import io.javalin.http.Context;
 import model.Role;
 import model.User;
+import java.util.HashMap;
+import java.util.Map;
 
 public class authController {
     private final String url = "jdbc:mysql://localhost:3306/employeedata";
@@ -50,7 +52,7 @@ public class authController {
         User authenticatedUser = userDao.login(loginUser.getEmail(), loginUser.getPassword(), url, sql_user, sql_password);
         
         if (authenticatedUser == null) {
-            ctx.status(401).result("Invalid credentials");
+            ctx.status(401).result("Error: Invalid credentials or the user account does not exist");
             return false;
         }
         
@@ -59,7 +61,14 @@ public class authController {
         ctx.sessionAttribute("user", authenticatedUser);
         ctx.sessionAttribute("token", sessionToken);
         
-        ctx.status(200).json(authenticatedUser);
+        // Create response with token and role for frontend
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", sessionToken);
+        response.put("role", authenticatedUser.getRole().toString());
+        response.put("email", authenticatedUser.getEmail());
+        response.put("empid", authenticatedUser.getEmpid());
+        
+        ctx.status(200).json(response);
         return true;
     }
     
@@ -68,18 +77,28 @@ public class authController {
     }
     
     public void adminAuthMiddleware(Context ctx) {
+        // Skip auth check for OPTIONS requests (CORS preflight)
+        if (ctx.method().equals("OPTIONS")) {
+            return;
+        }
+        
         User user = ctx.sessionAttribute("user");
         if (user == null || user.getRole() != Role.ADMIN) {
             ctx.status(403).result("Unauthorized: Admin access required");
-            ctx.redirect("/login");
+            // Removed the redirect to fix CORS issues
         }
     }
     
     public void employeeAuthMiddleware(Context ctx) {
+        // Skip auth check for OPTIONS requests (CORS preflight)
+        if (ctx.method().equals("OPTIONS")) {
+            return;
+        }
+        
         User user = ctx.sessionAttribute("user");
         if (user == null) {
             ctx.status(401).result("Unauthorized: Authentication required");
-            ctx.redirect("/login");
+            // Removed the redirect to fix CORS issues
         }
     }
 }

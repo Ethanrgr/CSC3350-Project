@@ -12,18 +12,16 @@ public class registrationRequest {
     public registrationRequest() {
     }
     
-    // Validate the request based on role
+    
     public boolean isValid() {
-        // Common validation for all roles
+        
         if (email == null || email.isBlank() || password == null || password.isBlank() || role == null) {
             return false;
         }
         
-        // Note: empid is no longer required for EMPLOYEE as it will be looked up by email
         return true;
     }
     
-    // Get the validation error message based on what's missing
     public String getValidationMessage() {
         if (email == null || email.isBlank()) {
             return "Email is required";

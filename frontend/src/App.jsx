@@ -1,49 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import './App.css'
-import axios from 'axios';
+
+// Import actual page components
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import AdminDashboard from './pages/AdminDashboard'
+import EmployeeDashboard from './pages/EmployeeDashboard'
+
+// Import ProtectedRoute component
+import ProtectedRoute from './components/ProtectedRoute'
+
+// Removed placeholder routes
 
 function App() {
-  const [msg, setMsg] = useState("")
+    // Auth state will be managed in Context
 
-  const fetchMessage = async () => {
-    try {
-        const res = await axios.get("http://localhost:8010/api/hello")
-        setMsg(res.data.message)
-    }
-    catch (err) {
-    setMsg("Failed to connect to backend")
-    }
-  }
-  const [count, setCount] = useState(0)
+    return (
+        <Router>
+            {/* Removed basic nav, we'll handle nav inside dashboards or a main layout component */}
+            {/* <nav>
+                <ul>
+                    <li><Link to="/login">Login</Link></li>
+                </ul>
+            </nav> */}
+            <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <button onClick={fetchMessage}> Get Backend Message</button>
-      <p>{msg}</p>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+                {/* Protected Admin Routes */}
+                <Route 
+                    path="/admin/*" 
+                    element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Protected Employee Routes */}
+                <Route 
+                    path="/employee/*" 
+                    element={
+                        <ProtectedRoute allowedRoles={['EMPLOYEE']}>
+                            <EmployeeDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                
+                <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+        </Router>
+    )
 }
 
 export default App

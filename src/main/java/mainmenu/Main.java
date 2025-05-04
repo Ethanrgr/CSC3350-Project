@@ -4,6 +4,7 @@ import controller.authController;
 import controller.employeeController;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
+import io.javalin.http.Context;
 
 import java.util.Map;
 
@@ -17,14 +18,15 @@ public class Main {
         Javalin app = Javalin.create(
                 config -> {
                     config.staticFiles.add("src/main/resources",Location.EXTERNAL);
-
+                    
+                    // Set CORS headers manually since Javalin CORS plugin might have version issues
                     config.router.apiBuilder(() -> {
                         path("/api", () -> {
                             //test
                             get("hello", ctx -> ctx.json(Map.of("message", "Hello")));
 
                             // Authentication endpoints
-                            get("login", authorization::login);
+                            post("login", authorization::login);
 
                             post("register", authorization::register);
                             
@@ -32,26 +34,24 @@ public class Main {
                             path("admin", () -> {
                                 before(authorization::adminAuthMiddleware);
                                 
-                                // CRUD operations for employees
+                                // Employee management
                                 get("employees", adminFunctions::getAllEmployees);
                                 get("employees/{id}", adminFunctions::getEmployeeById);
                                 post("employees", adminFunctions::createEmployee);
                                 put("employees/{id}", adminFunctions::updateEmployee);
                                 delete("employees/{id}", adminFunctions::deleteEmployee);
-                                
-                                // Search endpoints
+
                                 get("search", adminFunctions::searchEmployees);
                                 
-                                // Salary update endpoint
-                                post("salary/update-range", adminFunctions::updateSalaryRange);
+                                // Salary management
+                                put("employees/salary/range", adminFunctions::updateSalaryRange);
                                 
                                 // Reports
                                 get("reports/paystatements", adminFunctions::getAllPayStatements);
-                                get("reports/pay-by-title", adminFunctions::getTotalPayByJobTitle);
-                                get("reports/pay-by-division", adminFunctions::getTotalPayByDivision);
+                                get("reports/pay/jobtitle", adminFunctions::getTotalPayByJobTitle);
+                                get("reports/pay/division", adminFunctions::getTotalPayByDivision);
                             });
                             
-                            // Employee endpoints - protected for employee access
                             path("employee", () -> {
                                 before(authorization::employeeAuthMiddleware);
                                 
@@ -66,15 +66,24 @@ public class Main {
                 }
         ).start(8010);
 
+        // Add CORS headers for all requests
         app.before(ctx -> {
-            ctx.header("Access-Control-Allow-Origin", "*");
-            ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            ctx.header("Access-Control-Allow-Headers", "*");
+            addCorsHeaders(ctx);
         });
 
-        // Handle OPTIONS requests for CORS preflight
+        // Handle OPTIONS requests for CORS preflight - must respond with 200 OK
         app.options("/*", ctx -> {
-            ctx.status(200);
+            addCorsHeaders(ctx);
+            ctx.status(200).result("");
         });
+    }
+    
+    // Helper method to add CORS headers
+    private static void addCorsHeaders(Context ctx) {
+        ctx.header("Access-Control-Allow-Origin", "http://localhost:5173"); // Specific origin instead of wildcard
+        ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+        ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+        ctx.header("Access-Control-Allow-Credentials", "true");
+        ctx.header("Access-Control-Max-Age", "86400");
     }
 }

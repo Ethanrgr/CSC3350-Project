@@ -3,8 +3,17 @@ package controller;
 import dao.adminDAOImpl;
 import io.javalin.http.Context;
 import model.Employee;
+import model.City;
+import model.State;
+import dto.CreateEmployeeRequest;
+import dto.UpdateEmployeeRequest;
 import java.util.List;
 import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.DriverManager;
 
 public class adminController {
     private final String url = "jdbc:mysql://localhost:3306/employeedata";
@@ -35,33 +44,116 @@ public class adminController {
     }
     
     public void createEmployee(Context ctx) {
-        Employee newEmployee = ctx.bodyAsClass(Employee.class);
+        CreateEmployeeRequest createRequest;
+        try {
+            createRequest = ctx.bodyAsClass(CreateEmployeeRequest.class);
+        } catch (Exception e) { 
+            ctx.status(400).result("Invalid request body format: " + e.getMessage());
+            return; 
+        }
+
+        if (!createRequest.isValid()) {
+            ctx.status(400).result(createRequest.getValidationMessage());
+            return;
+        }
+
+        Employee newEmployee = new Employee();
+        newEmployee.setEmpId(createRequest.getEmpid());
+        newEmployee.setfName(createRequest.getfName());
+        newEmployee.setlName(createRequest.getlName());
+        newEmployee.setEmail(createRequest.getEmail());
+        newEmployee.setHireDate(createRequest.getHireDate());
+        newEmployee.setSalary(createRequest.getSalary());
+        newEmployee.setSsn(createRequest.getSsn());
+        
+        // Set address information
+        newEmployee.setStreet(createRequest.getStreet());
+        newEmployee.setZip(createRequest.getZip());
+        newEmployee.setGender(createRequest.getGender());
+        newEmployee.setIdentifiedRace(createRequest.getIdentifiedRace());
+        newEmployee.setDob(createRequest.getDob());
+        newEmployee.setMobilePhone(createRequest.getMobilePhone());
+        
+        // Set city and state if IDs are provided
+        if (createRequest.getCityId() != null) {
+            City city = getCityById(createRequest.getCityId());
+            newEmployee.setCity(city);
+        }
+        
+        if (createRequest.getStateId() != null) {
+            State state = getStateById(createRequest.getStateId());
+            newEmployee.setState(state);
+        }
+
         boolean success = adminDAO.createEmployee(newEmployee, url, sql_user, sql_password);
         
         if (success) {
-            ctx.status(201).json(newEmployee);
+            ctx.status(201).json(newEmployee); 
         } else {
-            ctx.status(500).result("Failed to create employee");
+            ctx.status(500).result("Failed to create employee. Possible duplicate ID, email, or SSN.");
         }
     }
     
     public void updateEmployee(Context ctx) {
-        int id;
+        int empId;
         try {
-            id = Integer.parseInt(ctx.pathParam("id"));
+            empId = Integer.parseInt(ctx.pathParam("id"));
         } catch (NumberFormatException e) {
-            ctx.status(400).result("Invalid employee ID format");
+            ctx.status(400).result("Invalid employee ID format in URL path.");
             return;
         }
+
+        UpdateEmployeeRequest updateRequest;
+        try {
+            updateRequest = ctx.bodyAsClass(UpdateEmployeeRequest.class);
+        } catch (Exception e) { 
+            ctx.status(400).result("Invalid request body format: " + e.getMessage());
+            return; 
+        }
+
+        if (!updateRequest.isValid()) {
+            ctx.status(400).result(updateRequest.getValidationMessage());
+            return;
+        }
+
+        Employee existingEmployee = adminDAO.getEmployeeById(empId, url, sql_user, sql_password);
+        if (existingEmployee == null) {
+            ctx.status(404).result("Employee with ID " + empId + " not found.");
+            return;
+        }
+
+        existingEmployee.setfName(updateRequest.getfName());
+        existingEmployee.setlName(updateRequest.getlName());
+        existingEmployee.setEmail(updateRequest.getEmail());
+        existingEmployee.setHireDate(updateRequest.getHireDate());
+        existingEmployee.setSalary(updateRequest.getSalary());
+        existingEmployee.setSsn(updateRequest.getSsn());
         
-        Employee updatedEmployee = ctx.bodyAsClass(Employee.class);
-        updatedEmployee.setEmpId(id); // Ensure ID from path is used
+        // Update address information
+        existingEmployee.setStreet(updateRequest.getStreet());
+        existingEmployee.setZip(updateRequest.getZip());
+        existingEmployee.setGender(updateRequest.getGender());
+        existingEmployee.setIdentifiedRace(updateRequest.getIdentifiedRace());
+        existingEmployee.setDob(updateRequest.getDob());
+        existingEmployee.setMobilePhone(updateRequest.getMobilePhone());
         
-        boolean success = adminDAO.updateEmployee(updatedEmployee, url, sql_user, sql_password);
+        // Update city and state if IDs are provided
+        if (updateRequest.getCityId() != null) {
+            City city = getCityById(updateRequest.getCityId());
+            existingEmployee.setCity(city);
+        }
+        
+        if (updateRequest.getStateId() != null) {
+            State state = getStateById(updateRequest.getStateId());
+            existingEmployee.setState(state);
+        }
+
+        boolean success = adminDAO.updateEmployee(existingEmployee, url, sql_user, sql_password);
+        
         if (success) {
-            ctx.json(updatedEmployee);
+            ctx.json(existingEmployee);
         } else {
-            ctx.status(500).result("Failed to update employee");
+            ctx.status(500).result("Failed to update employee. Possible duplicate email or SSN, or database error.");
         }
     }
     
@@ -103,9 +195,8 @@ public class adminController {
     }
     
     public void updateSalaryRange(Context ctx) {
-        Map updateParams = ctx.bodyAsClass(Map.class);
+        Map<String, Object> updateParams = ctx.bodyAsClass(Map.class);
         
-        // Extract parameters from the request body
         double percentage;
         double minSalary;
         double maxSalary;
@@ -119,12 +210,58 @@ public class adminController {
             return;
         }
         
+        // Input validation
+        if (percentage <= 0) {
+            ctx.status(400).result("Percentage must be greater than 0");
+            return;
+        }
+        
+        if (minSalary >= maxSalary) {
+            ctx.status(400).result("Minimum salary must be less than maximum salary");
+            return;
+        }
+        
+        // Get count of affected employees before update
+        int affectedCount = getEmployeeCountInSalaryRange(minSalary, maxSalary);
+        
         boolean success = adminDAO.updateSalaryInRange(percentage, minSalary, maxSalary, url, sql_user, sql_password);
         if (success) {
-            ctx.json(Map.of("message", "Salaries updated successfully"));
+            ctx.json(Map.of(
+                "message", "Salaries updated successfully",
+                "affectedEmployees", affectedCount,
+                "percentage", percentage,
+                "minSalary", minSalary,
+                "maxSalary", maxSalary
+            ));
         } else {
-            ctx.status(500).result("Failed to update salaries");
+            if (affectedCount == 0) {
+                ctx.status(404).result("No employees found in the specified salary range");
+            } else {
+                ctx.status(500).result("Failed to update salaries");
+            }
         }
+    }
+    
+    private int getEmployeeCountInSalaryRange(double minSalary, double maxSalary) {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM employees WHERE salary >= ? AND salary < ?";
+        
+        try (Connection conn = DriverManager.getConnection(url, sql_user, sql_password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setDouble(1, minSalary);
+            pstmt.setDouble(2, maxSalary);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting employees in salary range: " + e.getMessage());
+        }
+        
+        return count;
     }
     
     public void getAllPayStatements(Context ctx) {
@@ -156,5 +293,46 @@ public class adminController {
         
         List<Map<String, Object>> report = adminDAO.getTotalPayByDivision(month, year, url, sql_user, sql_password);
         ctx.json(report);
+    }
+
+    // Helper methods to fetch City and State objects
+    private City getCityById(int cityId) {
+        // Implement this to get City by ID from database
+        // For simplicity, you could add this functionality to your DAO
+        // Here's a simple implementation:
+        String sql = "SELECT city_id, city_name FROM city WHERE city_id = ?";
+        try (Connection conn = DriverManager.getConnection(url, sql_user, sql_password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, cityId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new City(rs.getInt("city_id"), rs.getString("city_name"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving city: " + e.getMessage());
+        }
+        return null;
+    }
+    
+    private State getStateById(int stateId) {
+        // Implement this to get State by ID from database
+        String sql = "SELECT state_id, state_name FROM state WHERE state_id = ?";
+        try (Connection conn = DriverManager.getConnection(url, sql_user, sql_password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, stateId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new State(rs.getInt("state_id"), rs.getString("state_name"), null);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving state: " + e.getMessage());
+        }
+        return null;
     }
 }
