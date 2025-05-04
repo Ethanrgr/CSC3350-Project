@@ -1,16 +1,15 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
-import { Routes, Route, Link, Navigate } from 'react-router-dom'; // Import routing components
-import ProfileView from '../components/employee/ProfileView'; // Import profile component
-import PayStatementsView from '../components/employee/PayStatementsView'; // Import pay statements component
+import { useAuth } from '../context/AuthContext';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import ProfileView from '../components/employee/ProfileView';
+import PayStatementsView from '../components/employee/PayStatementsView';
 import './PageStyles.css';
 
 function EmployeeDashboard() {
     const { user, logout } = useAuth(); // Get user and logout function
 
      const handleLogout = () => {
-        logout(); // Call logout from AuthContext
-        // Navigation to login is handled by ProtectedRoute upon state update
+        logout();
          console.log("Employee logout triggered");
     };
 

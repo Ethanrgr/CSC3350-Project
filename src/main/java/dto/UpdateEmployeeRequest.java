@@ -1,15 +1,13 @@
 package dto;
 
 public class UpdateEmployeeRequest {
-    // Fields that can be updated - empid is NOT included here
     private String fName;
     private String lName;
     private String email;
     private String hireDate; 
     private Float salary;    
     private String ssn;
-    
-    // Address information
+
     private String street;
     private String zip;
     private Integer cityId;
@@ -19,11 +17,9 @@ public class UpdateEmployeeRequest {
     private String dob;
     private String mobilePhone;
 
-    // Default constructor
     public UpdateEmployeeRequest() {
     }
 
-    // Getters and Setters for all fields...
     public String getfName() { return fName; }
     public void setfName(String fName) { this.fName = fName; }
     public String getlName() { return lName; }
@@ -36,8 +32,7 @@ public class UpdateEmployeeRequest {
     public void setSalary(Float salary) { this.salary = salary; }
     public String getSsn() { return ssn; }
     public void setSsn(String ssn) { this.ssn = ssn; }
-    
-    // Getters and setters for address information
+
     public String getStreet() { return street; }
     public void setStreet(String street) { this.street = street; }
     
@@ -61,10 +56,6 @@ public class UpdateEmployeeRequest {
     
     public String getMobilePhone() { return mobilePhone; }
     public void setMobilePhone(String mobilePhone) { this.mobilePhone = mobilePhone; }
-
-    // Validation logic (similar to CreateEmployeeRequest, but empid is not checked)
-    // Note: For updates, you might allow *some* fields to be null if they aren't being changed,
-    // but for simplicity here, we'll require all fields similar to create. Adjust as needed.
     public boolean isValid() {
         return fName != null && !fName.isBlank() &&
                lName != null && !lName.isBlank() &&
@@ -72,7 +63,6 @@ public class UpdateEmployeeRequest {
                hireDate != null && !hireDate.isBlank() && 
                ssn != null && !ssn.isBlank() &&
                salary != null && salary > 0;
-        // Not making address fields required for backward compatibility
     }
 
     public String getValidationMessage() {

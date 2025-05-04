@@ -5,11 +5,9 @@ public class Employee {
     private String fName;
     private String lName;
     private String email;
-    private String hireDate; //String or Date datatype - will decide later
+    private String hireDate;
     private float salary;
     private String ssn;
-    
-    // Address information
     private String street;
     private String zip;
     private City city;

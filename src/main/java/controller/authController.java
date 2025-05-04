@@ -15,8 +15,7 @@ public class authController {
 
     public boolean register(Context ctx){
         registrationRequest dto = ctx.bodyAsClass(registrationRequest.class);
-        
-        // Use the new validation method
+
         if (!dto.isValid()) {
             ctx.status(400).result(dto.getValidationMessage());
             return false;
@@ -77,7 +76,7 @@ public class authController {
     }
     
     public void adminAuthMiddleware(Context ctx) {
-        // Skip auth check for OPTIONS requests (CORS preflight)
+        // Skip auth check for OPTIONS requests
         if (ctx.method().equals("OPTIONS")) {
             return;
         }
@@ -85,7 +84,6 @@ public class authController {
         User user = ctx.sessionAttribute("user");
         if (user == null || user.getRole() != Role.ADMIN) {
             ctx.status(403).result("Unauthorized: Admin access required");
-            // Removed the redirect to fix CORS issues
         }
     }
     
@@ -98,7 +96,6 @@ public class authController {
         User user = ctx.sessionAttribute("user");
         if (user == null) {
             ctx.status(401).result("Unauthorized: Authentication required");
-            // Removed the redirect to fix CORS issues
         }
     }
 }

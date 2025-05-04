@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
-import './PageStyles.css'; // We'll create this for styling
+import { useAuth } from '../context/AuthContext';
+import './PageStyles.css';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false); // Prevent double clicks
-    const { login, apiClient } = useAuth(); // Get login function and apiClient from context
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { login, apiClient } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -19,7 +19,6 @@ function LoginPage() {
         console.log("Attempting login with:", email);
 
         try {
-            // Use the configured apiClient from AuthContext
             const response = await apiClient.post('/login', { email, password });
             console.log("Login response:", response.data); // Debug log
 
@@ -31,14 +30,13 @@ function LoginPage() {
                 console.log("Login successful, role:", role);
                 // Redirect based on role
                 if (role === 'ADMIN') {
-                    navigate('/admin', { replace: true }); // Use replace to remove login from history
+                    navigate('/admin', { replace: true });
                 } else if (role === 'EMPLOYEE') {
                     navigate('/employee', { replace: true });
                 } else {
                      setError('Login successful, but received an unknown user role.');
                 }
             } else {
-                 // This case might indicate a successful request (2xx) but missing data
                  setError('Login failed: Invalid response data received from server.');
                  console.error('Missing token or role in login response:', response.data);
             }
@@ -46,19 +44,15 @@ function LoginPage() {
             console.error("Login error:", err);
              let errorMessage = 'An unexpected error occurred during login.';
              if (err.response) {
-                // Server responded with an error status (4xx, 5xx)
-                 // Use message from backend if available, otherwise provide a generic one
                  errorMessage = err.response.data?.message || `Login failed (status: ${err.response.status}). Please check credentials.`;
              } else if (err.request) {
-                // Request was made but no response received (network error, server down)
                  errorMessage = 'Could not connect to the server. Please try again later.';
              } else {
-                 // Setup error or other JS error
                  errorMessage = `Login failed: ${err.message}`;
              }
              setError(errorMessage);
         } finally {
-            setIsSubmitting(false); // Re-enable button
+            setIsSubmitting(false);
         }
     };
 

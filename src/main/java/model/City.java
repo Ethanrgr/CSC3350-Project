@@ -27,8 +27,7 @@ public class City {
     public void setCityName(String cityName) {
         this.cityName = cityName;
     }
-    
-    // Backward compatibility methods
+
     public int getId() {
         return cityId;
     }

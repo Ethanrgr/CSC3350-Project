@@ -11,8 +11,6 @@ public class registrationRequest {
     
     public registrationRequest() {
     }
-    
-    
     public boolean isValid() {
         
         if (email == null || email.isBlank() || password == null || password.isBlank() || role == null) {

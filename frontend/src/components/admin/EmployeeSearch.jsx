@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Link } from 'react-router-dom'; // Import Link
-import '../../pages/PageStyles.css'; // Corrected path
-// We can potentially reuse the EmployeeList component's table or create a dedicated results component
+import { Link } from 'react-router-dom';
+import '../../pages/PageStyles.css';
 
 function EmployeeSearch() {
     const [searchParams, setSearchParams] = useState({
         name: '',
-        dob: '', // Expects YYYY-MM-DD format from input type="date"
+        dob: '',
         ssn: '',
         empid: ''
     });
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [searchAttempted, setSearchAttempted] = useState(false); // Track if a search has been run
+    const [searchAttempted, setSearchAttempted] = useState(false);
     const { apiClient } = useAuth();
 
     const handleInputChange = (e) => {
@@ -27,7 +26,7 @@ function EmployeeSearch() {
         setLoading(true);
         setError('');
         setSearchAttempted(true);
-        setResults([]); // Clear previous results
+        setResults([]);
 
         // Construct query parameters, only include non-empty values
         const queryParams = Object.entries(searchParams)
@@ -49,7 +48,6 @@ function EmployeeSearch() {
             console.log("Search results:", response.data);
             setResults(response.data || []); // Ensure results is an array
             if (!response.data || response.data.length === 0) {
-                 // Optional: Set a message indicating no results found, distinct from an error
                  console.log("No employees found matching the criteria.");
             }
         } catch (err) {
@@ -140,5 +138,3 @@ function EmployeeSearch() {
 }
 
 export default EmployeeSearch;
-
-// Add styles for .search-form if needed in PageStyles.css 

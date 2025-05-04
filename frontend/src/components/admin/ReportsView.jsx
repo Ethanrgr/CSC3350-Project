@@ -4,25 +4,23 @@ import '../../pages/PageStyles.css';
 
 function ReportsView() {
     const { apiClient } = useAuth();
-    const [activeTab, setActiveTab] = useState('paystatements'); // Default tab
+    const [activeTab, setActiveTab] = useState('paystatements');
     const [payStatements, setPayStatements] = useState([]);
     const [jobTitleReport, setJobTitleReport] = useState([]);
     const [divisionReport, setDivisionReport] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [reportParams, setReportParams] = useState({
-        month: new Date().getMonth() + 1, // Current month (1-12)
-        year: new Date().getFullYear() // Current year
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear()
     });
 
-    // Fetch initial pay statements on component mount
     useEffect(() => {
         if (activeTab === 'paystatements') {
             fetchPayStatements();
         }
     }, [activeTab]);
 
-    // Fetch pay statements handler
     const fetchPayStatements = async () => {
         setLoading(true);
         setError('');
@@ -41,7 +39,6 @@ function ReportsView() {
         }
     };
 
-    // Fetch job title pay report handler
     const fetchJobTitleReport = async () => {
         setLoading(true);
         setError('');
@@ -62,7 +59,6 @@ function ReportsView() {
         }
     };
 
-    // Fetch division pay report handler
     const fetchDivisionReport = async () => {
         setLoading(true);
         setError('');
@@ -83,12 +79,10 @@ function ReportsView() {
         }
     };
 
-    // Handle tab change
     const handleTabChange = (tab) => {
         setActiveTab(tab);
         setError('');
-        
-        // Fetch data for the selected tab
+
         if (tab === 'paystatements') {
             fetchPayStatements();
         } else if (tab === 'jobtitle') {
@@ -98,7 +92,6 @@ function ReportsView() {
         }
     };
 
-    // Handle report parameters change
     const handleParamChange = (e) => {
         const { name, value } = e.target;
         setReportParams(prev => ({
@@ -107,7 +100,6 @@ function ReportsView() {
         }));
     };
 
-    // Generate report based on parameters
     const handleGenerateReport = (e) => {
         e.preventDefault();
         

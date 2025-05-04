@@ -65,7 +65,7 @@ public class adminController {
         newEmployee.setHireDate(createRequest.getHireDate());
         newEmployee.setSalary(createRequest.getSalary());
         newEmployee.setSsn(createRequest.getSsn());
-        
+
         // Set address information
         newEmployee.setStreet(createRequest.getStreet());
         newEmployee.setZip(createRequest.getZip());
@@ -74,7 +74,7 @@ public class adminController {
         newEmployee.setDob(createRequest.getDob());
         newEmployee.setMobilePhone(createRequest.getMobilePhone());
         
-        // Set city and state if IDs are provided
+        // Set city and state
         if (createRequest.getCityId() != null) {
             City city = getCityById(createRequest.getCityId());
             newEmployee.setCity(city);
@@ -137,7 +137,7 @@ public class adminController {
         existingEmployee.setDob(updateRequest.getDob());
         existingEmployee.setMobilePhone(updateRequest.getMobilePhone());
         
-        // Update city and state if IDs are provided
+        // Update city and state
         if (updateRequest.getCityId() != null) {
             City city = getCityById(updateRequest.getCityId());
             existingEmployee.setCity(city);
@@ -209,8 +209,7 @@ public class adminController {
             ctx.status(400).result("Invalid parameters. Required: percentage, minSalary, maxSalary");
             return;
         }
-        
-        // Input validation
+
         if (percentage <= 0) {
             ctx.status(400).result("Percentage must be greater than 0");
             return;
@@ -220,8 +219,7 @@ public class adminController {
             ctx.status(400).result("Minimum salary must be less than maximum salary");
             return;
         }
-        
-        // Get count of affected employees before update
+
         int affectedCount = getEmployeeCountInSalaryRange(minSalary, maxSalary);
         
         boolean success = adminDAO.updateSalaryInRange(percentage, minSalary, maxSalary, url, sql_user, sql_password);
@@ -295,11 +293,8 @@ public class adminController {
         ctx.json(report);
     }
 
-    // Helper methods to fetch City and State objects
+
     private City getCityById(int cityId) {
-        // Implement this to get City by ID from database
-        // For simplicity, you could add this functionality to your DAO
-        // Here's a simple implementation:
         String sql = "SELECT city_id, city_name FROM city WHERE city_id = ?";
         try (Connection conn = DriverManager.getConnection(url, sql_user, sql_password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -318,7 +313,6 @@ public class adminController {
     }
     
     private State getStateById(int stateId) {
-        // Implement this to get State by ID from database
         String sql = "SELECT state_id, state_name FROM state WHERE state_id = ?";
         try (Connection conn = DriverManager.getConnection(url, sql_user, sql_password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

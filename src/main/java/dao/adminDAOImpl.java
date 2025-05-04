@@ -171,8 +171,7 @@ public class adminDAOImpl implements adminDAO {
                 
                 pstmt.executeUpdate();
             }
-            
-            // Check if address exists for this employee
+
             String checkAddressSql = "SELECT COUNT(*) FROM address WHERE empid = ?";
             boolean addressExists = false;
             try (PreparedStatement pstmt = conn.prepareStatement(checkAddressSql)) {
@@ -186,10 +185,8 @@ public class adminDAOImpl implements adminDAO {
             
             String addressSql;
             if (addressExists) {
-                // Update address table
                 addressSql = "UPDATE address SET street = ?, zip = ?, city_id = ?, state_id = ?, gender = ?, identified_race = ?, dob = ?, mobile_phone = ? WHERE empid = ?";
             } else {
-                // Insert into address table
                 addressSql = "INSERT INTO address (street, zip, city_id, state_id, gender, identified_race, dob, mobile_phone, empid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             }
             
@@ -248,15 +245,13 @@ public class adminDAOImpl implements adminDAO {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, dbUser, dbPass);
-            conn.setAutoCommit(false); // Start transaction
+            conn.setAutoCommit(false);
 
             // 1. Delete from address table first (child table)
             String deleteAddressSql = "DELETE FROM address WHERE empid = ?";
             try (PreparedStatement pstmtAddress = conn.prepareStatement(deleteAddressSql)) {
                 pstmtAddress.setInt(1, empId);
-                pstmtAddress.executeUpdate(); 
-                // We don't strictly need to check rows affected here, 
-                // as an employee might not have an address record.
+                pstmtAddress.executeUpdate();
             }
 
             // 2. Delete from employees table (parent table)
@@ -265,13 +260,13 @@ public class adminDAOImpl implements adminDAO {
                 pstmtEmployee.setInt(1, empId);
                 int rowsAffected = pstmtEmployee.executeUpdate();
                 if (rowsAffected == 0) {
-                    // If no employee was deleted (maybe ID didn't exist), rollback
+                    // If no employee was deleted rollback
                     conn.rollback();
                     return false;
                 }
             }
 
-            conn.commit(); // Commit transaction
+            conn.commit();
             return true;
 
         } catch (SQLException e) {
@@ -286,7 +281,6 @@ public class adminDAOImpl implements adminDAO {
             }
             return false;
         } finally {
-            // Ensure auto-commit is restored and connection is closed
             try {
                 if (conn != null) {
                     conn.setAutoCommit(true);
@@ -384,7 +378,6 @@ public class adminDAOImpl implements adminDAO {
             }
             
             if (updatedEmpIds.isEmpty()) {
-                // No employees found in the salary range
                 return false;
             }
             
@@ -399,7 +392,6 @@ public class adminDAOImpl implements adminDAO {
             }
             
             // Insert new pay records in payroll table for each affected employee
-            // Using current date for the pay record
             String insertPayrollSql = "INSERT INTO payroll (empid, pay_date, earnings, fed_tax, fed_med, fed_SS, state_tax, retire_401k, health_care) VALUES (?, CURRENT_DATE(), ?, 0, 0, 0, 0, 0, 0)";
             try (PreparedStatement pstmt = conn.prepareStatement(insertPayrollSql)) {
                 for (int empId : updatedEmpIds) {

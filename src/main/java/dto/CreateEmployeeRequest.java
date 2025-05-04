@@ -21,7 +21,6 @@ public class CreateEmployeeRequest {
     private String dob;
     private String mobilePhone;
 
-    // Default constructor required by Jackson
     public CreateEmployeeRequest() {
     }
 
@@ -45,8 +44,6 @@ public class CreateEmployeeRequest {
 
     public String getSsn() { return ssn; }
     public void setSsn(String ssn) { this.ssn = ssn; }
-    
-    // Getters and setters for address information
     public String getStreet() { return street; }
     public void setStreet(String street) { this.street = street; }
     
@@ -79,7 +76,6 @@ public class CreateEmployeeRequest {
                hireDate != null && !hireDate.isBlank() && 
                ssn != null && !ssn.isBlank() &&
                salary != null && salary > 0;
-        // Not making address fields required for backward compatibility
     }
 
     

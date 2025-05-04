@@ -24,8 +24,6 @@ function RegisterPage() {
             setError('Passwords do not match.');
             return;
         }
-        // We no longer need to validate role here since it's coming from a dropdown
-        // with predefined values
 
         setIsSubmitting(true);
         console.log("Attempting registration with:", { email, role });
@@ -34,7 +32,7 @@ function RegisterPage() {
             const payload = { 
                 email, 
                 password, 
-                role: role // No need to uppercase as the dropdown values are already uppercase
+                role: role
             };
 
             const response = await apiClient.post('/register', payload);

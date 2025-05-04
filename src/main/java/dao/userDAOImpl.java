@@ -19,7 +19,6 @@ public class userDAOImpl implements userDAO{
     
     @Override
     public Boolean register(User user, String url, String dbUser, String dbPass) {
-        // Validate common requirements
         if (user.getEmail() == null || user.getPassword() == null || user.getRole() == null) {
             System.err.println("Error: Missing required user data");
             return false;
@@ -77,7 +76,7 @@ public class userDAOImpl implements userDAO{
                 if (rs.next()) {
                     return rs.getInt("empid");
                 }
-                return null; // No employee found with this email
+                return null;
             }
         } catch (SQLException e) {
             System.err.println("Error looking up employee by email: " + e.getMessage());
@@ -95,7 +94,7 @@ public class userDAOImpl implements userDAO{
             pstmt.setInt(1, empId);
             
             try (ResultSet rs = pstmt.executeQuery()) {
-                return rs.next(); // Returns true if employee is already registered
+                return rs.next();
             }
         } catch (SQLException e) {
             System.err.println("Error checking if employee is registered: " + e.getMessage());
@@ -139,8 +138,7 @@ public class userDAOImpl implements userDAO{
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setRole(Role.fromString(rs.getString("role")));
-                
-                // If empid is not null, set it
+
                 Integer empid = rs.getInt("empid");
                 if (!rs.wasNull()) {
                     user.setEmpid(empid);

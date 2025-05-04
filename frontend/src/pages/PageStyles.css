@@ -1,4 +1,3 @@
-/* Basic styles for page containers and forms */
 .page-container {
     max-width: 500px;
     margin: 2rem auto;
@@ -68,7 +67,7 @@ button[type="submit"]:hover {
 }
 
 .error-message {
-    color: #dc3545; /* Red */
+    color: #dc3545;
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
     padding: 0.75rem;
@@ -78,7 +77,7 @@ button[type="submit"]:hover {
 }
 
 .success-message {
-    color: #155724; /* Green */
+    color: #155724;
     background-color: #d4edda;
     border: 1px solid #c3e6cb;
     padding: 0.75rem;
@@ -92,7 +91,6 @@ button[type="submit"]:hover {
     margin-top: 1.5rem;
 }
 
-/* Basic Dashboard Styles */
 .dashboard-container {
     padding: 2rem;
     max-width: 1200px;
@@ -107,7 +105,7 @@ button[type="submit"]:hover {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    float: right; /* Position logout button */
+    float: right;
 }
 
 .logout-button:hover {
@@ -115,7 +113,7 @@ button[type="submit"]:hover {
 }
 
 .dashboard-nav {
-    margin-top: 2rem; /* Add space below header/logout */
+    margin-top: 2rem;
     padding: 1rem;
     background-color: #e9ecef;
     border-radius: 4px;
@@ -131,7 +129,7 @@ button[type="submit"]:hover {
 }
 
 .dashboard-nav li {
-     cursor: pointer; /* Indicate they are clickable (though functionality not added yet) */
+     cursor: pointer;
 }
 
 .dashboard-nav li:hover {
@@ -155,27 +153,26 @@ button[type="submit"]:hover {
 
 .data-table th,
 .data-table td {
-    border: 1px solid #dee2e6; /* Lighter border */
-    padding: 10px 12px; /* More padding */
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
     text-align: left;
-    vertical-align: middle; /* Align text vertically */
+    vertical-align: middle;
 }
 
 .data-table th {
-    background-color: #f8f9fa; /* Lighter header */
-    font-weight: 600; /* Slightly bolder */
+    background-color: #f8f9fa;
+    font-weight: 600;
     color: #495057;
 }
 
 .data-table tbody tr:nth-child(even) {
-    background-color: #fdfdfe; /* Very subtle striping */
+    background-color: #fdfdfe;
 }
 
 .data-table tbody tr:hover {
-    background-color: #e9ecef; /* Slightly darker hover */
+    background-color: #e9ecef;
 }
 
-/* Styles for action buttons within the table */
 .data-table button {
     padding: 5px 10px;
     font-size: 0.85rem;
@@ -190,9 +187,8 @@ button[type="submit"]:hover {
     opacity: 0.9;
 }
 
-/* Example specific button styles */
 .data-table button.edit-btn {
-    background-color: #ffc107; /* Warning yellow */
+    background-color: #ffc107;
     border-color: #ffc107;
     color: #212529;
 }
@@ -202,7 +198,7 @@ button[type="submit"]:hover {
 }
 
 .data-table button.delete-btn {
-    background-color: #dc3545; /* Danger red */
+    background-color: #dc3545;
     border-color: #dc3545;
     color: white;
 }
@@ -211,7 +207,6 @@ button[type="submit"]:hover {
     border-color: #bd2130;
 }
 
-/* Styles for profile details */
 .profile-details {
     background-color: #f8f9fa;
     padding: 1.5rem;
@@ -257,11 +252,10 @@ button[type="submit"]:hover {
     }
 }
 
-/* Style for Create Employee button */
 .create-button {
     display: inline-block;
     padding: 8px 15px;
-    background-color: #17a2b8; /* Info blue */
+    background-color: #17a2b8;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -276,13 +270,11 @@ button[type="submit"]:hover {
     text-decoration: none;
 }
 
-/* Form description */
 .form-description {
     margin-bottom: 1rem;
     color: #6c757d;
 }
 
-/* Styles for reports */
 .reports-container {
     margin-bottom: 2rem;
 }
@@ -340,7 +332,6 @@ button[type="submit"]:hover {
     gap: 0.5rem;
 }
 
-/* Form styles for filter/search forms */
 .filter-form {
     margin-bottom: 1.5rem;
     padding: 1rem;
@@ -353,7 +344,6 @@ button[type="submit"]:hover {
     margin-bottom: 1.5rem;
 }
 
-/* Employee Profile Layout Styles */
 .profile-container {
     width: 100%;
     max-width: 1200px;
@@ -361,7 +351,6 @@ button[type="submit"]:hover {
     padding: 1rem;
 }
 
-/* Loading Styles */
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -385,7 +374,6 @@ button[type="submit"]:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Error Container */
 .error-container {
     display: flex;
     justify-content: center;

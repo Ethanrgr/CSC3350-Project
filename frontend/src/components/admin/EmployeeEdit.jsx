@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import '../../pages/PageStyles.css'; // Corrected path
+import '../../pages/PageStyles.css';
 
 function EmployeeEdit() {
-    const { empId } = useParams(); // Get employee ID from route parameter
+    const { empId } = useParams();
     const navigate = useNavigate();
     const { apiClient } = useAuth();
-    const [employeeData, setEmployeeData] = useState(null); // Or initialize with default structure
+    const [employeeData, setEmployeeData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Fetch employee data on component mount
     useEffect(() => {
         const fetchEmployee = async () => {
             setLoading(true);
@@ -42,8 +41,6 @@ function EmployeeEdit() {
         setEmployeeData(prev => ({
             ...prev,
             [name]: value
-            // Add type conversion if necessary (e.g., for salary)
-            // [name]: name === 'salary' ? parseFloat(value) || 0 : value
         }));
     };
 
@@ -51,7 +48,6 @@ function EmployeeEdit() {
         e.preventDefault();
         if (!employeeData || isSubmitting) return;
 
-        // Basic validation placeholder - add more specific checks
         if (!employeeData.fName || !employeeData.lName || !employeeData.email) {
             setError('First Name, Last Name, and Email are required.');
             return;
@@ -63,7 +59,6 @@ function EmployeeEdit() {
         console.log(`Updating employee ID: ${empId} with data:`, employeeData);
 
         try {
-            // Create the payload to match backend expectations
             const payload = {
                 fName: employeeData.fName,
                 lName: employeeData.lName,
@@ -71,7 +66,6 @@ function EmployeeEdit() {
                 hireDate: employeeData.hireDate,
                 salary: parseFloat(employeeData.salary) || 0,
                 ssn: employeeData.ssn,
-                // Address fields
                 street: employeeData.street,
                 zip: employeeData.zip,
                 cityId: employeeData.city?.cityId || employeeData.city?.id,
@@ -86,8 +80,7 @@ function EmployeeEdit() {
             const response = await apiClient.put(`/admin/employees/${empId}`, payload);
             console.log("Update response:", response.data);
             setSuccessMessage('Employee updated successfully!');
-            // Optionally navigate back after a delay
-             setTimeout(() => navigate('/admin/employees'), 1500);
+             setTimeout(() => navigate('/admin/employees'), 500);
         } catch (err) {
             console.error(`Failed to update employee ${empId}:`, err);
              setError(err.response?.data?.message || 'Failed to update employee.');
@@ -100,15 +93,14 @@ function EmployeeEdit() {
         return <div>Loading employee data...</div>;
     }
 
-    if (error && !employeeData) { // Show error only if data couldn't be loaded initially
+    if (error && !employeeData) {
         return <div className="error-message">{error}</div>;
     }
 
-    if (!employeeData) { // Should not happen if loading/error handled, but good fallback
+    if (!employeeData) {
         return <div>Employee not found.</div>;
     }
 
-    // Render the form once data is loaded
     return (
         <div>
             <h3>Edit Employee (ID: {empId})</h3>

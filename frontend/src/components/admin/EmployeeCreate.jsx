@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import '../../pages/PageStyles.css'; // Corrected path
+import '../../pages/PageStyles.css';
 
 function EmployeeCreate() {
     const navigate = useNavigate();
@@ -15,7 +15,6 @@ function EmployeeCreate() {
         hireDate: '', 
         salary: '',   
         ssn: '',
-        // Address information
         street: '',
         zip: '',
         cityId: '',
@@ -41,12 +40,10 @@ function EmployeeCreate() {
         e.preventDefault();
         if (isSubmitting) return;
 
-        // Basic Validation - enhance as needed
         if (!newEmployee.empid || !newEmployee.fName || !newEmployee.lName || !newEmployee.email) {
             setError('Employee ID, First Name, Last Name, and Email are required.');
             return;
         }
-        // Add validation for date format, SSN format, salary etc.
 
         setIsSubmitting(true);
         setError('');
@@ -54,25 +51,24 @@ function EmployeeCreate() {
         console.log("Attempting to create employee with data:", newEmployee);
 
         try {
-             // Prepare payload, ensure salary is a number and empid is a number
             const payload = {
                 ...newEmployee,
-                empid: parseInt(newEmployee.empid) || 0, // Convert empid to number
-                salary: parseFloat(newEmployee.salary) || 0, // Convert salary
+                empid: parseInt(newEmployee.empid) || 0,
+                salary: parseFloat(newEmployee.salary) || 0,
                 cityId: newEmployee.cityId ? parseInt(newEmployee.cityId) : null,
                 stateId: newEmployee.stateId ? parseInt(newEmployee.stateId) : null,
             };
 
             const response = await apiClient.post('/admin/employees', payload);
-            console.log("Create response:", response.data); // May return the created employee object
+            console.log("Create response:", response.data);
             setSuccessMessage('Employee created successfully!');
             // Clear form
             setNewEmployee({
                 empid: '', fName: '', lName: '', email: '', hireDate: '', salary: '', ssn: '',
                 street: '', zip: '', cityId: '', stateId: '', gender: '', identifiedRace: '', dob: '', mobilePhone: ''
             });
-            // Navigate back to the list after a short delay
-             setTimeout(() => navigate('/admin/employees'), 1500);
+
+             setTimeout(() => navigate('/admin/employees'), 500);
 
         } catch (err) {
             console.error("Failed to create employee:", err);
@@ -179,7 +175,7 @@ function EmployeeCreate() {
                         value={newEmployee.mobilePhone} 
                         onChange={handleInputChange} 
                         disabled={isSubmitting}
-                        placeholder="Format: XXX-XXX-XXXX" 
+                        placeholder="XXX-XXX-XXXX"
                     />
                 </div>
 

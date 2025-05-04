@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Link } from 'react-router-dom'; // Import Link for navigation
-import '../../pages/PageStyles.css'; // Corrected path
+import { Link } from 'react-router-dom';
+import '../../pages/PageStyles.css';
 
 function EmployeeList() {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [deleteError, setDeleteError] = useState(''); // Separate state for delete errors
-    const [deleteSuccess, setDeleteSuccess] = useState(''); // State for delete success message
+    const [deleteError, setDeleteError] = useState('');
+    const [deleteSuccess, setDeleteSuccess] = useState('');
     const { apiClient } = useAuth();
 
-    // Function to fetch employees (can be called after delete)
     const fetchEmployees = async () => {
         setLoading(true);
-        setError(''); // Clear general errors when refetching
-        setDeleteError(''); // Clear delete errors
-        setDeleteSuccess(''); // Clear delete success
+        setError('');
+        setDeleteError('');
+        setDeleteSuccess('');
         try {
             console.log("Fetching all employees...");
             const response = await apiClient.get('/admin/employees');
             console.log("Employees fetched:", response.data);
-            setEmployees(response.data || []); // Ensure it's an array
+            setEmployees(response.data || []);
         } catch (err) {
             console.error("Failed to fetch employees:", err);
             let errorMessage = 'Failed to load employee data.';
@@ -31,39 +30,32 @@ function EmployeeList() {
                 errorMessage = 'No response from server.';
             }
             setError(errorMessage);
-            setEmployees([]); // Clear employees on error
+            setEmployees([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Fetch employees on initial mount
     useEffect(() => {
         fetchEmployees();
     }, [apiClient]); // Dependency on apiClient ensures refetch if context changes
 
-    // Delete Handler Implementation
     const handleDelete = async (empIdToDelete) => {
-        // Confirmation dialog
         if (!window.confirm(`Are you sure you want to delete employee ID: ${empIdToDelete}? This action cannot be undone.`)) {
-            return; // Abort if user cancels
+            return;
         }
 
-        setDeleteError(''); // Clear previous delete errors
-        setDeleteSuccess(''); // Clear previous success messages
+        setDeleteError('');
+        setDeleteSuccess('');
         
         try {
             console.log(`Attempting to delete employee ID: ${empIdToDelete}`);
             const response = await apiClient.delete(`/admin/employees/${empIdToDelete}`);
-            console.log("Delete response:", response); // Check status or response data
+            console.log("Delete response:", response);
             
             setDeleteSuccess(`Employee ID: ${empIdToDelete} deleted successfully!`);
-            
-            // Update UI: Remove the deleted employee from state
+
             setEmployees(prevEmployees => prevEmployees.filter(emp => emp.empId !== empIdToDelete));
-            
-            // Optional: Refetch the list instead of filtering state
-            // await fetchEmployees(); // Call fetchEmployees to get the updated list from backend
 
         } catch (err) {
             console.error(`Failed to delete employee ${empIdToDelete}:`, err);
@@ -75,11 +67,10 @@ function EmployeeList() {
             }
             setDeleteError(errorMessage);
         }
-        // Consider clearing success/error messages after a timeout
         setTimeout(() => {
             setDeleteError('');
             setDeleteSuccess('');
-        }, 5000); // Clear messages after 5 seconds
+        }, 5000);
     };
 
     if (loading) {
@@ -171,50 +162,3 @@ function EmployeeList() {
 }
 
 export default EmployeeList;
-
-// Add basic table styles to PageStyles.css or a new CSS file
-/*
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-
-.data-table th,
-.data-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.data-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-.data-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.data-table tbody tr:hover {
-    background-color: #e2e6ea;
-}
-*/ 
-
-// Add styles for .create-button if desired
-/*
-.create-button {
-    display: inline-block;
-    padding: 8px 15px;
-    background-color: #28a745; 
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-}
-
-.create-button:hover {
-    background-color: #218838;
-}
-*/ 

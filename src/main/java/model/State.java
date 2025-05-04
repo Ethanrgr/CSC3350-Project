@@ -37,8 +37,7 @@ public class State {
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
-    
-    // Backward compatibility methods
+
     public int getId() {
         return stateId;
     }

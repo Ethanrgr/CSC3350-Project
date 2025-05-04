@@ -18,13 +18,9 @@ public class Main {
         Javalin app = Javalin.create(
                 config -> {
                     config.staticFiles.add("src/main/resources",Location.EXTERNAL);
-                    
-                    // Set CORS headers manually since Javalin CORS plugin might have version issues
+
                     config.router.apiBuilder(() -> {
                         path("/api", () -> {
-                            //test
-                            get("hello", ctx -> ctx.json(Map.of("message", "Hello")));
-
                             // Authentication endpoints
                             post("login", authorization::login);
 
