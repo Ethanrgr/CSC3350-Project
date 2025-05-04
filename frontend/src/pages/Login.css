@@ -1,4 +1,20 @@
+.app-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+}
+
+.side-logo {
+    margin-left: -100px;
+    width: 500px; 
+    height: 500px;
+    margin-right: 50px; /* space between logo and form */
+}
+
 .login_box {
+    margin-left: 300px;
     width: 420px;
     background-color: whitesmoke;
     border: 2px solid rgba(255, 255, 255, .2);
@@ -110,4 +126,12 @@
 
 .sign_up p a:hover {
     text-decoration: underline;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    display: block; /* Ensure it is visible */
 }

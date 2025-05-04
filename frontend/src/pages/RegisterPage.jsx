@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './PageStyles.css';
+import { useNavigate } from 'react-router-dom';
+import { FaLock } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+import axios from 'axios';
+import logo from '../assets/WBDS_Logo.svg';
+import './Login.css'; // Reuse same styles
 
-function RegisterPage() {
+const SignUpPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -11,12 +14,12 @@ function RegisterPage() {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { apiClient } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
+
         setError('');
         setSuccessMessage('');
 
@@ -26,103 +29,77 @@ function RegisterPage() {
         }
 
         setIsSubmitting(true);
-        console.log("Attempting registration with:", { email, role });
 
         try {
-            const payload = { 
-                email, 
-                password, 
-                role: role
-            };
-
-            const response = await apiClient.post('/register', payload);
-            console.log("Register response:", response.data);
-
-            setSuccessMessage('Registration successful! Redirecting to login...');
-            console.log("Registration successful");
+            const response = await axios.post('http://localhost:5000/api/register', {
+                email,
+                password,
+                role
+            });
+            console.log("Registration success:", response.data);
+            setSuccessMessage('Registration successful! Redirecting...');
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
-
         } catch (err) {
-            console.error("Registration error:", err);
-            let errorMessage = 'An unexpected error occurred during registration.';
-             if (err.response) {
-                 errorMessage = err.response.data?.message || err.response.data || `Registration failed (status: ${err.response.status}). Email might be taken.`;
-             } else if (err.request) {
-                 errorMessage = 'Could not connect to the server. Please try again later.';
-             } else {
-                 errorMessage = `Registration failed: ${err.message}`;
-             }
-             setError(errorMessage);
-             setSuccessMessage('');
+            console.error("Registration failed:", err.response?.data || err.message);
+            setError(err.response?.data?.message || 'Registration failed. Email may already be taken.');
         } finally {
-             setIsSubmitting(false);
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="page-container">
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit} className="auth-form">
-                {error && <p className="error-message">{error}</p>}
-                {successMessage && <p className="success-message">{successMessage}</p>}
-                <div className="form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        disabled={isSubmitting}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        disabled={isSubmitting}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="confirmPassword">Confirm Password:</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        disabled={isSubmitting}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="role">Role:</label>
-                    <select 
-                        id="role"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)} 
-                        required
-                        disabled={isSubmitting}
-                        className="role-select"
-                    >
-                        <option value="EMPLOYEE">EMPLOYEE</option>
-                        <option value="ADMIN">ADMIN</option>
-                    </select>
-                </div>
-                <button type="submit" disabled={isSubmitting}>
-                     {isSubmitting ? 'Registering...' : 'Register'}
-                </button>
-            </form>
-            <p>
-                Already have an account? <Link to="/login">Login here</Link>
-            </p>
+        <div className="app-container">
+            <img src={logo} alt="Logo" className="side-logo" />
+            <div className="login_box">
+                <form onSubmit={handleRegister}>
+                    <h1>Sign Up</h1>
+                    <div className="login_info">
+                        <input type="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isSubmitting}/>
+                        <MdEmail className="icon" />
+                    </div>
+                    <div className="login_info">
+                        <input type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isSubmitting}/>
+                        <FaLock className="icon" />
+                    </div>
+                    <div className="login_info">
+                        <input type="password" placeholder="Confirm Password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} disabled={isSubmitting}/>
+                        <FaLock className="icon" />
+                    </div>
+                    <div className="login_info">
+                        <select 
+                            value={role} 
+                            onChange={(e) => setRole(e.target.value)} 
+                            disabled={isSubmitting}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                borderRadius: '40px',
+                                backgroundColor: 'pink',
+                                border: '2px solid rgba(255, 255, 255, .2)',
+                                fontSize: '16px',
+                                color: 'black',
+                                padding: '0 15px'
+                            }}
+                        >
+                            <option value="EMPLOYEE">EMPLOYEE</option>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? 'Registering...' : 'Register'}
+                    </button>
+                    {error && <p className="error">{error}</p>}
+                    {successMessage && <p className="success-message">{successMessage}</p>}
+                    <div className="sign_up">
+                        <p>Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Login here!</a></p>
+                    </div>
+                </form>
+            </div>
         </div>
     );
-}
+};
 
-export default RegisterPage; 
+export default SignUpPage;
