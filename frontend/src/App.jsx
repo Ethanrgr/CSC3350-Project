@@ -13,11 +13,11 @@ function App() {
     return (
         <Router>
             {/* Removed basic nav, we'll handle nav inside dashboards or a main layout component */}
-
+                <div className="project-name">WBDS</div>
             <Routes>
                 {/* Public Routes */}
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/signup" element={<RegisterPage />} />
 
                 {/* Protected Admin Routes */}
                 <Route 
